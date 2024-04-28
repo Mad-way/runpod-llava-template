@@ -6,7 +6,6 @@ FROM runpod/base:0.4.0-cuda11.8.0
 # Please refer to the base image's Dockerfile for more information before adding additional dependencies.
 # IMPORTANT: The base image overrides the default huggingface cache location.
 
-
 # --- Optional: System dependencies ---
 # COPY builder/setup.sh /setup.sh
 # RUN /bin/bash /setup.sh && \
@@ -19,11 +18,22 @@ RUN python3.11 -m pip install --upgrade pip && \
     python3.11 -m pip install --upgrade -r /requirements.txt --no-cache-dir && \
     rm /requirements.txt
 
-# NOTE: The base image comes with multiple Python versions pre-installed.
-#       It is reccommended to specify the version of Python when running your code.
 
+
+RUN pwd
 
 # Add src files (Worker Template)
 ADD src .
+WORKDIR /LLaVA
+RUN python3.11 -m pip install transformers==4.36.2
+# COPY LLaVA/pyproject.toml /pyproject.toml
+RUN python3.11 -m pip install gradio .
+
+# NOTE: The base image comes with multiple Python versions pre-installed.
+#       It is reccommended to specify the version of Python when running your code.
+
+# WORKDIR ..
+
+
 
 CMD python3.11 -u /handler.py
